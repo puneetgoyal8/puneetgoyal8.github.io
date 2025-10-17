@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealEasy - Deep Link Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #8c0414;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .link-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .link-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .link-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #8c0414;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .link-button:hover {
+            background: #6d0310;
+            transform: translateY(-2px);
+        }
+        
+        .link-button.custom-scheme {
+            background: #667eea;
+        }
+        
+        .link-button.custom-scheme:hover {
+            background: #5568d3;
+        }
+        
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 RealEasy Deep Link Tester</h1>
+        <p class="subtitle">Test different deep link scenarios</p>
+        
+        <!-- Property Completion Links -->
+        <div class="link-section">
+            <h2>📦 Property Completion Flow</h2>
+            
+            <a href="https://puneetgoyal8.github.io/realeasy/property?id=123&task_id=456" class="link-button">
+                🌐 Test via Landing Page (App Links)
+            </a>
+            <div class="code">https://puneetgoyal8.github.io/realeasy/property?id=123&task_id=456</div>
+            
+            <a href="realeasy://property?id=123&task_id=456" class="link-button custom-scheme">
+                🔗 Test Direct Custom Scheme
+            </a>
+            <div class="code">realeasy://property?id=123&task_id=456</div>
+            
+            <div class="note success">
+                <strong>Expected:</strong> Opens property completion flow with property ID 123 and task ID 456
+            </div>
+        </div>
+        
+        <!-- Property Registration Links -->
+        <div class="link-section">
+            <h2>📝 Property Registration Flow</h2>
+            
+            <a href="https://puneetgoyal8.github.io/realeasy/propertyRegistration?task_id=789&profile_id=abc123" class="link-button">
+                🌐 Test via Landing Page (App Links)
+            </a>
+            <div class="code">https://puneetgoyal8.github.io/realeasy/propertyRegistration?task_id=789&profile_id=abc123</div>
+            
+            <a href="realeasy://propertyRegistration?task_id=789&profile_id=abc123" class="link-button custom-scheme">
+                🔗 Test Direct Custom Scheme
+            </a>
+            <div class="code">realeasy://propertyRegistration?task_id=789&profile_id=abc123</div>
+            
+            <div class="note success">
+                <strong>Expected:</strong> Opens property registration form with task and profile IDs
+            </div>
+        </div>
+        
+        <!-- Generic App Open -->
+        <div class="link-section">
+            <h2>🚀 Generic App Open</h2>
+            
+            <a href="https://puneetgoyal8.github.io/realeasy/open" class="link-button">
+                🌐 Test via Landing Page
+            </a>
+            <div class="code">https://puneetgoyal8.github.io/realeasy/open</div>
+            
+            <a href="realeasy://open" class="link-button custom-scheme">
+                🔗 Test Direct Custom Scheme
+            </a>
+            <div class="code">realeasy://open</div>
+            
+            <div class="note success">
+                <strong>Expected:</strong> Opens app to home screen (based on user type)
+            </div>
+        </div>
+        
+        <!-- Language-specific Links -->
+        <div class="link-section">
+            <h2>🌍 With Language Parameter</h2>
+            
+            <a href="https://puneetgoyal8.github.io/realeasy/property?id=123&task_id=456&lang=hi" class="link-button">
+                🌐 Open in Hindi
+            </a>
+            <div class="code">https://puneetgoyal8.github.io/realeasy/property?id=123&task_id=456&lang=hi</div>
+            
+            <a href="realeasy://property?id=123&task_id=456&lang=pa" class="link-button custom-scheme">
+                🔗 Open in Punjabi
+            </a>
+            <div class="code">realeasy://property?id=123&task_id=456&lang=pa</div>
+            
+            <div class="note success">
+                <strong>Expected:</strong> App opens with specified language
+            </div>
+        </div>
+        
+        <!-- Testing Instructions -->
+        <div class="link-section">
+            <h2>📱 How to Test</h2>
+            
+            <div class="note">
+                <strong>On Android Device:</strong><br>
+                1. Open this page in Chrome browser<br>
+                2. Tap any link above<br>
+                3. If app installed → Opens app<br>
+                4. If not installed → Redirects to Play Store
+            </div>
+            
+            <div class="note" style="margin-top: 10px;">
+                <strong>Via ADB:</strong><br>
+                Copy any URL above and run:<br>
+                <code style="background: #2d3748; color: #68d391; padding: 5px; border-radius: 3px; display: block; margin-top: 5px;">
+                    adb shell am start -a android.intent.action.VIEW -d "URL_HERE"
+                </code>
+            </div>
+        </div>
+        
+        <!-- Share Links -->
+        <div class="link-section">
+            <h2>💬 Share via WhatsApp/SMS</h2>
+            
+            <p style="margin-bottom: 15px; color: #666;">
+                Copy these links to share with users:
+            </p>
+            
+            <textarea readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-size: 12px; resize: vertical;" rows="4">Property Link:
+https://puneetgoyal8.github.io/realeasy/property?id=123&task_id=456
+
+Registration Link:
+https://puneetgoyal8.github.io/realeasy/propertyRegistration?task_id=789&profile_id=abc123</textarea>
+            
+            <button onclick="copyLinks()" style="width: 100%; padding: 12px; margin-top: 10px; background: #25D366; color: white; border: none; border-radius: 5px; font-weight: 600; cursor: pointer;">
+                📋 Copy Links
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function copyLinks() {
+            const textarea = document.querySelector('textarea');
+            textarea.select();
+            document.execCommand('copy');
+            alert('✅ Links copied to clipboard!');
+        }
+        
+        // Log when links are clicked
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                console.log('🔗 Deep link clicked:', e.target.href);
+            });
+        });
+    </script>
+</body>
+</html>
