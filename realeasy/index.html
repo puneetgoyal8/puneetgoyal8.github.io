@@ -1,4 +1,218 @@
-<!doctype html>
-<meta charset="utf-8">
-<title>OK</title>
-OK
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealEasy - Property Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #8c0414;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #8c0414;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status {
+            font-size: 14px;
+            color: #8c0414;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #8c0414;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background: #6d0310;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(140,4,20,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏠</div>
+        <h1>RealEasy</h1>
+        <p id="message">Opening RealEasy app...</p>
+        <div class="spinner" id="spinner"></div>
+        <p class="status" id="status">Please wait...</p>
+        <a href="#" id="fallbackBtn" class="btn" style="display: none;">Open in Play Store</a>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const deepLinkPath = window.location.pathname;
+        const allParams = {};
+        
+        urlParams.forEach((value, key) => {
+            allParams[key] = value;
+        });
+
+        // Play Store URL (WhatsApp as placeholder)
+        const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.whatsapp';
+        
+        // Custom scheme URL
+        let customSchemeUrl = 'realeasy://';
+        
+        // Remove /realeasy prefix from path for matching
+        const cleanPath = deepLinkPath.replace('/realeasy', '');
+        
+        // Detect the type of deep link
+        if (cleanPath.includes('/property')) {
+            const propertyId = allParams.id || allParams.property_id || '';
+            customSchemeUrl += `property?id=${propertyId}`;
+            
+            // Add all other params
+            Object.keys(allParams).forEach(key => {
+                if (key !== 'id' && key !== 'property_id') {
+                    customSchemeUrl += `&${key}=${allParams[key]}`;
+                }
+            });
+        } else if (deepLinkPath.includes('/propertyRegistration')) {
+            customSchemeUrl += 'propertyRegistration?';
+            const params = [];
+            if (allParams.task_id) params.push(`task_id=${allParams.task_id}`);
+            if (allParams.profile_id) params.push(`profile_id=${allParams.profile_id}`);
+            if (allParams.property_id) params.push(`property_id=${allParams.property_id}`);
+            customSchemeUrl += params.join('&');
+        } else {
+            // Generic deep link - pass all params
+            const paramString = urlParams.toString();
+            if (paramString) {
+                customSchemeUrl += `open?${paramString}`;
+            } else {
+                customSchemeUrl += 'open';
+            }
+        }
+
+        console.log('Deep link URL:', customSchemeUrl);
+
+        // Track if app was opened
+        let appOpened = false;
+        let startTime = Date.now();
+
+        // Try to open the app
+        function attemptAppOpen() {
+            // Method 1: Try iframe (works on some Android versions)
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = customSchemeUrl;
+            document.body.appendChild(iframe);
+
+            // Method 2: Try window.location (works on most devices)
+            setTimeout(() => {
+                if (!appOpened) {
+                    window.location.href = customSchemeUrl;
+                }
+            }, 500);
+        }
+
+        // Detect if user left the page (app opened)
+        function detectAppOpened() {
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    appOpened = true;
+                    document.getElementById('message').textContent = 'Opening app...';
+                    document.getElementById('status').textContent = 'Success! ✓';
+                }
+            });
+
+            window.addEventListener('blur', function() {
+                appOpened = true;
+            });
+
+            window.addEventListener('pagehide', function() {
+                appOpened = true;
+            });
+        }
+
+        // Fallback to Play Store
+        function showPlayStoreFallback() {
+            setTimeout(() => {
+                const elapsed = Date.now() - startTime;
+                
+                // If more than 2.5 seconds passed and page still visible, app probably not installed
+                if (!appOpened && elapsed > 2500) {
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('message').textContent = 'App not installed?';
+                    document.getElementById('status').textContent = 'Download RealEasy from Play Store';
+                    document.getElementById('fallbackBtn').style.display = 'inline-block';
+                    document.getElementById('fallbackBtn').href = PLAY_STORE_URL;
+                }
+            }, 3000);
+        }
+
+        // Initialize
+        detectAppOpened();
+        attemptAppOpen();
+        showPlayStoreFallback();
+
+        // Manual fallback click
+        document.getElementById('fallbackBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = PLAY_STORE_URL;
+        });
+    </script>
+</body>
+</html>
